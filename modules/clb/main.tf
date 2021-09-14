@@ -10,6 +10,7 @@ resource "alicloud_slb_load_balancer" "clb" {
   address_type       = "internet"
   load_balancer_spec = "slb.s2.small"
   vswitch_id         = alicloud_vswitch.clb.id
+  delete_protection = "off"
 }
 
 resource "alicloud_slb_backend_server" "clb" {

@@ -11,13 +11,13 @@ resource "tls_private_key" "key" {
 }
 
 resource "local_file" "private_key" {
-  filename          = "${path.module}/ecs-key.pem"
+  filename          = "${path.module}/tf-ecs-key.pem"
   sensitive_content = tls_private_key.key.private_key_pem
   file_permission   = "0400"
 }
 
 resource "alicloud_ecs_key_pair" "key_pair" {
-  key_pair_name = "ecs-key"
+  key_pair_name = "tf-ecs-key"
   public_key    = tls_private_key.key.public_key_openssh
 }
 
