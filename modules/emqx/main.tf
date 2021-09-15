@@ -1,37 +1,33 @@
 locals {
-  emqx_home       = "/opt/emqx"
-  emqx_anchor     = element(alicloud_instance.ecs[*].private_ip, 0)
-  emqx_rest       = slice(alicloud_instance.ecs[*].public_ip, 1, var.instance_count)
-  emqx_rest_count = var.instance_count - 1
+  emqx_home = "/opt/emqx"
 }
 
-## ssl certificate
+## ssh certificate
 resource "tls_private_key" "key" {
   algorithm = "RSA"
 }
 
 resource "local_file" "private_key" {
-  filename          = "${path.module}/tf-ecs-key.pem"
+  filename          = "${path.module}/tf-emqx-key.pem"
   sensitive_content = tls_private_key.key.private_key_pem
   file_permission   = "0400"
 }
 
 resource "alicloud_ecs_key_pair" "key_pair" {
-  key_pair_name = "tf-ecs-key"
+  key_pair_name = "tf-emqx-single-key"
   public_key    = tls_private_key.key.public_key_openssh
 }
 
 
 ## ecs
 resource "alicloud_instance" "ecs" {
-  count                = var.instance_count
   instance_name        = "${var.instance_name}-instance"
   image_id             = var.image_id
   instance_type        = var.instance_type
   system_disk_category = var.system_disk_category
   system_disk_size     = var.system_disk_size
   security_groups      = [var.security_group_id]
-  vswitch_id           = var.vswitch_ids[count.index]
+  vswitch_id           = var.vswitch_ids[0]
 
   internet_max_bandwidth_out = var.internet_max_bandwidth_out
   key_name                   = alicloud_ecs_key_pair.key_pair.key_name
@@ -66,24 +62,6 @@ resource "alicloud_instance" "ecs" {
   provisioner "remote-exec" {
     inline = [
       "sudo ${local.emqx_home}/bin/emqx start"
-    ]
-  }
-}
-
-## Join the emqx nodes
-resource "null_resource" "emqx_cluster" {
-  count = local.emqx_rest_count
-
-  connection {
-    type        = "ssh"
-    host        = local.emqx_rest[count.index % local.emqx_rest_count]
-    user        = "root"
-    private_key = tls_private_key.key.private_key_pem
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "${local.emqx_home}/bin/emqx_ctl cluster join emqx@${local.emqx_anchor}"
     ]
   }
 }

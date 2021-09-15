@@ -1,5 +1,5 @@
 module "vpc" {
-  source       = "./modules/vpc/"
+  source       = "../../modules/vpc/"
   region       = var.region
   namespace    = var.namespace
   vpc_cidr     = var.vpc_cidr
@@ -7,7 +7,7 @@ module "vpc" {
 }
 
 module "security_group" {
-  source                   = "./modules/security_group/"
+  source                   = "../../modules/security_group/"
   namespace                = var.namespace
   security_group_name      = var.security_group_name
   vpc_id                   = module.vpc.vpc_id
@@ -15,8 +15,8 @@ module "security_group" {
   egress_with_cidr_blocks  = var.egress_with_cidr_blocks
 }
 
-module "ecs" {
-  source = "./modules/ecs/"
+module "emqx" {
+  source = "../../modules/emqx/"
   region = var.region
 
   instance_name              = var.namespace
@@ -30,17 +30,4 @@ module "ecs" {
 
   security_group_id = module.security_group.security_group_id
   vswitch_ids       = module.vpc.vswitch_ids
-  instance_count    = length(module.vpc.vswitch_ids)
-}
-
-module "clb" {
-  source = "./modules/clb/"
-
-  name                = var.namespace
-  clb_cidr            = var.clb_cidr
-  clb_az              = var.clb_az
-  vpc_id              = module.vpc.vpc_id
-  instance_ids        = module.ecs.instance_ids
-  listener_http_ports = var.listener_http_ports
-  listener_tcp_ports  = var.listener_tcp_ports
 }

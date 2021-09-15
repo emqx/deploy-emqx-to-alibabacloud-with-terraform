@@ -10,7 +10,7 @@ resource "alicloud_slb_load_balancer" "clb" {
   address_type       = "internet"
   load_balancer_spec = "slb.s2.small"
   vswitch_id         = alicloud_vswitch.clb.id
-  delete_protection = "off"
+  delete_protection  = "off"
 }
 
 resource "alicloud_slb_backend_server" "clb" {
@@ -44,10 +44,10 @@ resource "alicloud_slb_listener" "tcp_listener" {
   protocol              = "tcp"
   bandwidth             = -1
   health_check          = "on"
-  healthy_threshold      = 8
-  unhealthy_threshold    = 8
-  health_check_timeout   = 8
-  health_check_interval  = 5
+  healthy_threshold     = 8
+  unhealthy_threshold   = 8
+  health_check_timeout  = 8
+  health_check_interval = 5
 }
 
 resource "alicloud_slb_listener" "http_listener" {
