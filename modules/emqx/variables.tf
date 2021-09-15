@@ -34,7 +34,7 @@ variable "vswitch_ids" {
   type = list(string)
 }
 
-variable "emqx_package_path" {
+variable "emqx_package" {
   type = string
 }
 

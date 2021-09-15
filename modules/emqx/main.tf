@@ -41,7 +41,7 @@ resource "alicloud_instance" "ecs" {
 
   # scp emqx
   provisioner "file" {
-    source      = var.emqx_package_path
+    source      = var.emqx_package
     destination = "/tmp/emqx.zip"
   }
 

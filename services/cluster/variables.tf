@@ -103,7 +103,7 @@ variable "internet_max_bandwidth_out" {
   description = "internet max bandwidth out"
 }
 
-variable "emqx_package_path" {
+variable "emqx_package" {
   type        = string
   default     = ""
   description = "emqx package path"
