@@ -38,6 +38,6 @@ variable "emqx_package" {
   type = string
 }
 
-variable "emqx_lic" {
-  type = string
-}
+# variable "emqx_lic" {
+#   type = string
+# }

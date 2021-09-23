@@ -1,6 +1,6 @@
 ## common
 
-namespace = "tf-emqx-cluster"
+namespace = "tf-emqx-single"
 
 ## vpc
 
@@ -11,19 +11,9 @@ ecs_vswitch_conf = [
   {
     "name" = "tf-vswitch-01",
     "az"   = "cn-shenzhen-d",
-    "cidr" = "172.16.1.0/24"
-    # "cidr" = "10.65.128.0/18"
-  },
-  {
-    "name" = "tf-vswitch-02",
-    "az"   = "cn-shenzhen-e",
-    "cidr" = "172.16.2.0/24"
-    # "cidr" = "10.65.192.0/18"
+    "cidr" = "172.16.11.0/24"
   }
 ]
-
-clb_cidr = "172.16.3.0/24"
-clb_az   = "cn-shenzhen-d"
 
 ## security group
 
@@ -63,18 +53,6 @@ ingress_with_cidr_blocks = [
     port_range  = "18083/18083"
     protocol    = "tcp"
     cidr_blocks = "0.0.0.0/0"
-  },
-  {
-    description = "cluster ekka"
-    port_range  = "4370/4370"
-    protocol    = "tcp"
-    cidr_blocks = "0.0.0.0/0"
-  },
-  {
-    description = "cluster rpc"
-    port_range  = "5370/5370"
-    protocol    = "tcp"
-    cidr_blocks = "0.0.0.0/0"
   }
 ]
 
@@ -87,12 +65,5 @@ egress_with_cidr_blocks = [
   }
 ]
 
-## clb
+emqx_package = "https://www.emqx.com/zh/downloads/broker/4.3.8/emqx-ubuntu20.04-4.3.8-amd64.zip"
 
-listener_tcp_ports = [
-  1883, 8883, 8083, 8084
-]
-
-listener_http_ports = [
-  18083
-]

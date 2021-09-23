@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-LIC="/opt/emqx/etc/emqx.lic"
+# LIC="/opt/emqx/etc/emqx.lic"
 HOME="/opt"
 
 # Install necessary dependencies
@@ -67,11 +67,6 @@ sudo sed -i 's/listener.tcp.external.acceptors = 8/listener.tcp.external.accepto
 sudo sed -i 's/listener.tcp.external.max_conn_rate = 1000/listener.tcp.external.max_conn_rate = 10000/g' $HOME/emqx/etc/listeners.conf
 sudo sed -i 's/sysmon.large_heap = 8MB/sysmon.large_heap = 64MB/g' $HOME/emqx/etc/sys_mon.conf
 sudo sed -i 's/node.name = emqx@127.0.0.1/node.name = emqx@${local_ip}/g' $HOME/emqx/etc/emqx.conf
-
-# create emqx license file
-sudo cat > $LIC<<EOF
-${emqx_lic}
-EOF
 
 # install proxy
 # sudo apt-get install -y rsyslog

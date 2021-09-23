@@ -3,7 +3,7 @@
 #   value = module.ecs.public_ips
 # }
 
-output "emqx_public_ip" {
-  description = "public ip of the emqx"
-  value       = module.emqx.public_ip
+output "emqx_cluster_address" {
+  description = "public ip of clb"
+  value       = module.clb.clb_public_ip
 }

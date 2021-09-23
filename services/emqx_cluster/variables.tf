@@ -38,6 +38,19 @@ variable "vpc_cidr" {
   description = "cidr of vpc"
 }
 
+variable "clb_cidr" {
+  type        = string
+  default     = ""
+  description = "cidr for the clb"
+}
+
+variable "clb_az" {
+  type        = string
+  default     = ""
+  description = "description"
+}
+
+
 ## Security Group
 
 variable "security_group_name" {
@@ -96,8 +109,22 @@ variable "emqx_package" {
   description = "emqx package path"
 }
 
-variable "emqx_lic" {
-  type        = string
-  default     = ""
-  description = "emqx license"
+# variable "emqx_lic" {
+#   type        = string
+#   default     = ""
+#   description = "emqx license"
+# }
+
+## clb
+
+variable "listener_tcp_ports" {
+  type        = list(number)
+  default     = []
+  description = "the tcp listener ports of clb"
+}
+
+variable "listener_http_ports" {
+  type        = list(number)
+  default     = []
+  description = "the http listener ports of clb"
 }

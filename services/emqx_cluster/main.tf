@@ -26,7 +26,7 @@ module "emqx_cluster" {
   system_disk_size           = var.system_disk_size
   internet_max_bandwidth_out = var.internet_max_bandwidth_out
   emqx_package          = var.emqx_package
-  emqx_lic                   = var.emqx_lic
+  # emqx_lic                   = var.emqx_lic
 
   security_group_id = module.security_group.security_group_id
   vswitch_ids       = module.vpc.vswitch_ids

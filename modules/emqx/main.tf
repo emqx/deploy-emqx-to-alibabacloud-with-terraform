@@ -39,18 +39,19 @@ resource "alicloud_instance" "ecs" {
     private_key = tls_private_key.key.private_key_pem
   }
 
-  # scp emqx
   provisioner "file" {
-    source      = var.emqx_package
-    destination = "/tmp/emqx.zip"
-  }
-
-  # init system
-  provisioner "file" {
-    content     = templatefile("${path.module}/scripts/init.sh", { emqx_lic = var.emqx_lic, local_ip = self.private_ip })
+    content     = templatefile("${path.module}/scripts/init.sh", { local_ip = self.private_ip })
     destination = "/tmp/init.sh"
   }
 
+  # download emqx
+  provisioner "remote-exec" {
+    inline = [
+      "curl -L --max-redirs -1 -o /tmp/emqx.zip ${var.emqx_package}"
+    ]
+  }
+
+  # init system
   provisioner "remote-exec" {
     inline = [
       "chmod +x /tmp/init.sh",
