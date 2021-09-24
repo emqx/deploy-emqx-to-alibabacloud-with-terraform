@@ -19,7 +19,7 @@ terraform apply -auto-approve
 ```
 
 
-## Deploy EMQ X cluster(only support 2 node)
+## Deploy EMQ X cluster(default 2 node)
 ```bash
 cd services/emqx_cluster
 terraform init
