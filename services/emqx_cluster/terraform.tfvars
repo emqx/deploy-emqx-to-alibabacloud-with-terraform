@@ -98,4 +98,4 @@ listener_http_ports = [
 ]
 
 
-emqx_package = "https://www.emqx.com/zh/downloads/broker/4.3.8/emqx-ubuntu20.04-4.3.8-amd64.zip"
+emqx_package = "https://www.emqx.com/en/downloads/enterprise/4.4.3/emqx-ee-4.4.3-otp24.1.5-3-ubuntu20.04-amd64.zip"

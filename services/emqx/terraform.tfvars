@@ -65,5 +65,4 @@ egress_with_cidr_blocks = [
   }
 ]
 
-emqx_package = "https://www.emqx.com/zh/downloads/broker/4.3.8/emqx-ubuntu20.04-4.3.8-amd64.zip"
-
+emqx_package = "https://www.emqx.com/en/downloads/broker/4.4.3/emqx-4.4.3-otp24.1.5-3-ubuntu20.04-amd64.zip"
