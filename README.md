@@ -41,14 +41,11 @@ terraform destroy -auto-approve
 > ubuntu 20.04
 
 - emqx
-> emqx open source 4.3.8
+> emqx open source 4.4.3
 
 ## Config variables(optional)
 - instance_type
 > default is 2C2G `ecs.t6-c1m1.large`
-
-- vpc_cidr
-> default is `172.16.0.0/16`
 
 - region
 > default is `cn-shenzhen`
