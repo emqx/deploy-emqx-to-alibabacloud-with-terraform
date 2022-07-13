@@ -73,16 +73,16 @@ variable "egress_with_cidr_blocks" {
 
 ## Ecs
 
-variable "image_id" {
-  type        = string
-  default     = "ubuntu_20_04_x64_20G_alibase_20210623.vhd"
-  description = "image id"
-}
-
 variable "instance_type" {
   type        = string
   default     = "ecs.t6-c1m1.large"
   description = "instance type"
+}
+
+variable "image_id" {
+  type        = string
+  default     = "ubuntu_20_04_x64_20G_alibase_20210623.vhd"
+  description = "image id"
 }
 
 variable "system_disk_category" {

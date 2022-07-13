@@ -2,6 +2,13 @@
 
 namespace = "tf-emqx-cluster"
 
+## region
+
+region = "cn-shenzhen"
+
+## ecs
+instance_type = "ecs.t6-c1m1.large"
+
 ## vpc
 
 # vpc_cidr = "10.65.0.0/16"
