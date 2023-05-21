@@ -26,13 +26,7 @@ variable "secret_key" {
 
 ## Vpc
 
-variable "ecs_vswitch_conf" {
-  type        = list(any)
-  default     = []
-  description = "vswitch configurations"
-}
-
-variable "vpc_cidr" {
+variable "emqx_address_space" {
   type        = string
   default     = ""
   description = "cidr of vpc"
@@ -61,13 +55,69 @@ variable "security_group_name" {
 
 variable "ingress_with_cidr_blocks" {
   type        = list(any)
-  default     = [null]
-  description = "ingress of emqx with cidr blocks"
+  default     = [
+    {
+      description = "ssh"
+      port_range  = "22/22"
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      description = "mqtt"
+      port_range  = "1883/1883"
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      description = "mqtts"
+      port_range  = "8883/8883"
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      description = "ws"
+      port_range  = "8083/8083"
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      description = "wss"
+      port_range  = "8084/8084"
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      description = "dashboard"
+      port_range  = "18083/18083"
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      description = "cluster ekka"
+      port_range  = "4370/4370"
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      description = "cluster rpc"
+      port_range  = "5370/5370"
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+  description = "(Required) ingress of emqx with cidr blocks"
 }
 
 variable "egress_with_cidr_blocks" {
   type        = list(any)
-  default     = [null]
+  default     = [
+    {
+      description = "all"
+      port_range  = "-1/-1"
+      protocol    = "all"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
   description = "egress with cidr blocks"
 }
 
@@ -103,17 +153,11 @@ variable "internet_max_bandwidth_out" {
   description = "internet max bandwidth out"
 }
 
-variable "emqx_package" {
+variable "emqx_lic" {
   type        = string
   default     = ""
-  description = "emqx package path"
+  description = "emqx license"
 }
-
-# variable "emqx_lic" {
-#   type        = string
-#   default     = ""
-#   description = "emqx license"
-# }
 
 ## clb
 
@@ -128,3 +172,34 @@ variable "listener_http_ports" {
   default     = []
   description = "the http listener ports of clb"
 }
+
+variable "emqx_package" {
+  description = "(Required) The install package of emqx"
+  type        = string
+  default     = ""
+}
+
+variable "emqx_instance_count" {
+  description = "(Required) The count of emqx node"
+  type        = number
+  default     = 1
+}
+
+variable "emqx5_core_count" {
+  description = "(Required) The count of emqx core node"
+  type        = number
+  default     = 1
+}
+
+variable "is_emqx5" {
+  description = "(Optional) Is emqx5 or not"
+  type        = bool
+  default     = false
+}
+
+variable "emqx_cookie" {
+  description = "(Optional) The cookie of emqx"
+  type        = string
+  default     = "emqx_secret_cookie"
+}
+

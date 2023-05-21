@@ -7,10 +7,14 @@ variable "region" {
   type = string
 }
 
-variable "vpc_cidr" {
+variable "instance_count" {
+  type = number
+}
+
+variable "emqx_address_space" {
   type = string
 }
 
-variable "vswitch_conf" {
-  type = list(any)
+variable "instance_type" {
+  type = string
 }
