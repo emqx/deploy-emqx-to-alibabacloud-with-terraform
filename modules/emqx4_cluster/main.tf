@@ -1,8 +1,9 @@
 locals {
-  emqx_home       = "/opt/emqx"
-  emqx_anchor     = element(alicloud_instance.ecs[*].private_ip, 0)
-  emqx_rest       = slice(alicloud_instance.ecs[*].public_ip, 1, var.instance_count)
-  emqx_rest_count = var.instance_count - 1
+  home       = "/root"
+  public_ips =  alicloud_instance.ecs[*].public_ip
+  private_ips =  alicloud_instance.ecs[*].private_ip
+
+  private_ips_string = join(",", [for ip in local.private_ips : format("emqx@%s", ip)])
 }
 
 ## ssl certificate
@@ -25,6 +26,7 @@ resource "alicloud_ecs_key_pair" "key_pair" {
 ## ecs
 resource "alicloud_instance" "ecs" {
   count                = var.instance_count
+
   instance_name        = "${var.instance_name}-instance"
   image_id             = var.image_id
   instance_type        = var.instance_type
@@ -35,24 +37,30 @@ resource "alicloud_instance" "ecs" {
 
   internet_max_bandwidth_out = var.internet_max_bandwidth_out
   key_name                   = alicloud_ecs_key_pair.key_pair.key_name
+}
+
+resource "null_resource" "emqx" {
+  depends_on = [alicloud_instance.ecs]
+
+  count = var.instance_count
 
   connection {
     type        = "ssh"
     user        = "root"
-    host        = self.public_ip
+    host        = local.public_ips[count.index]
     private_key = tls_private_key.key.private_key_pem
   }
 
   provisioner "file" {
-    content     = templatefile("${path.module}/scripts/init.sh", { local_ip = self.private_ip })
+    content     = templatefile("${path.module}/scripts/init.sh", { local_ip = local.private_ips[count.index],
+      emqx_lic = var.emqx_lic, cookie = var.cookie, all_nodes = local.private_ips_string })
     destination = "/tmp/init.sh"
   }
 
-  # download emqx
-  provisioner "remote-exec" {
-    inline = [
-      "curl -L --max-redirs -1 -o /tmp/emqx.zip ${var.emqx_package}"
-    ]
+  # copy emqx package
+  provisioner "file" {
+    source      = var.emqx_package
+    destination = "/tmp/emqx.zip"
   }
 
   # init system
@@ -60,31 +68,15 @@ resource "alicloud_instance" "ecs" {
     inline = [
       "chmod +x /tmp/init.sh",
       "/tmp/init.sh",
+      "sudo mv /tmp/emqx ${local.home}",
     ]
   }
 
   # Note: validate the above variables, you have to start emqx separately
   provisioner "remote-exec" {
     inline = [
-      "sudo ${local.emqx_home}/bin/emqx start"
+      "sudo ${local.home}/emqx/bin/emqx start"
     ]
   }
 }
 
-## join the emqx nodes
-resource "null_resource" "emqx_cluster" {
-  count = local.emqx_rest_count
-
-  connection {
-    type        = "ssh"
-    host        = local.emqx_rest[count.index % local.emqx_rest_count]
-    user        = "root"
-    private_key = tls_private_key.key.private_key_pem
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "${local.emqx_home}/bin/emqx_ctl cluster join emqx@${local.emqx_anchor}"
-    ]
-  }
-}

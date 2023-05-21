@@ -6,7 +6,7 @@ variable "clb_cidr" {
   type = string
 }
 
-variable "clb_az" {
+variable "region" {
   type = string
 }
 
@@ -24,4 +24,8 @@ variable "listener_tcp_ports" {
 
 variable "listener_http_ports" {
   type = list(number)
+}
+
+variable "instance_type" {
+  type = string
 }

@@ -1,8 +1,13 @@
+data "alicloud_zones" "zones_ds" {
+  available_instance_type = var.instance_type
+}
+
 resource "alicloud_vswitch" "clb" {
   vpc_id       = var.vpc_id
   cidr_block   = var.clb_cidr
-  zone_id      = var.clb_az
   vswitch_name = "${var.name}-clb-vsw"
+  zone_id      = data.alicloud_zones.zones_ds.zones[0].id
+  # zone_id = "${var.region}-a"
 }
 
 resource "alicloud_slb_load_balancer" "clb" {
@@ -15,16 +20,6 @@ resource "alicloud_slb_load_balancer" "clb" {
 
 resource "alicloud_slb_backend_server" "clb" {
   load_balancer_id = alicloud_slb_load_balancer.clb.id
-
-  #   backend_servers {
-  #     server_id = alicloud_instance.default[0].id
-  #     weight    = 100
-  #   }
-
-  #   backend_servers {
-  #     server_id = alicloud_instance.default[1].id
-  #     weight    = 100
-  #   }
 
   dynamic "backend_servers" {
     for_each = var.instance_ids
