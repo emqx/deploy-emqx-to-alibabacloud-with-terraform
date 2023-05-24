@@ -31,7 +31,6 @@ export ALICLOUD_SECRET_KEY=${secret-key}
 
 To deploy EMQX version 4.4.x, provide the package URL in the emqx_package variable. Replace ${emqx4_package_url} with your actual URL.
 
-te
 ```bash
 emqx_package = ${emqx4_package_url}
 ```
