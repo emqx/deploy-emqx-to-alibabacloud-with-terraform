@@ -173,8 +173,14 @@ variable "listener_http_ports" {
   description = "the http listener ports of clb"
 }
 
-variable "emqx_package" {
-  description = "(Required) The install package of emqx"
+variable "emqx4_package" {
+  description = "(Required) The install package of emqx4"
+  type        = string
+  default     = ""
+}
+
+variable "emqx5_package" {
+  description = "(Required) The install package of emqx5"
   type        = string
   default     = ""
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 BASE_DIR="/tmp"
 LIC="/tmp/emqx/etc/emqx.lic"
@@ -16,7 +16,7 @@ sudo ulimit -n 1048576
 echo 'fs.file-max = 1048576' | sudo tee -a /etc/sysctl.conf
 echo 'DefaultLimitNOFILE=1048576' | sudo tee -a /etc/systemd/system.conf
 
-sudo tee -a /etc/security/limits.conf << EOF
+sudo tee -a /etc/security/limits.conf <<EOF
 root      soft   nofile      1048576
 root      hard   nofile      1048576
 EOF
@@ -50,15 +50,13 @@ sudo tar -xzf /tmp/emqx.tar.gz -C $BASE_DIR/emqx
 sudo chown -R root:root $BASE_DIR/emqx
 sudo rm /tmp/emqx.tar.gz
 
-
 # emqx tuning
 sudo sed -i '/^ *node {/,/^ *} *$/c\node {\n  name = "emqx@${local_ip}"\n  cookie = "${cookie}"\n  data_dir = "data"\n  role  = core\n}' $BASE_DIR/emqx/etc/emqx.conf
 sudo sed -i '/^ *cluster {/,/^ *} *$/c\cluster {\n  name = emqxcl\n  discovery_strategy = static\n  core_nodes = ${core_nodes}\n  static {\n    seeds = ${all_nodes}\n  }\n}' $BASE_DIR/emqx/etc/emqx.conf
 
-
 # create license file
 if [ -n "${emqx_lic}" ]; then
-sudo cat > $LIC<<EOF
+	sudo cat >$LIC <<EOF
 ${emqx_lic}
 EOF
 fi

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 BASE_DIR="/tmp"
 LIC="/tmp/emqx/etc/emqx.lic"
@@ -16,7 +16,7 @@ sudo ulimit -n 1048576
 echo 'fs.file-max = 1048576' | sudo tee -a /etc/sysctl.conf
 echo 'DefaultLimitNOFILE=1048576' | sudo tee -a /etc/systemd/system.conf
 
-sudo tee -a /etc/security/limits.conf << EOF
+sudo tee -a /etc/security/limits.conf <<EOF
 root      soft   nofile      1048576
 root      hard   nofile      1048576
 EOF
@@ -58,15 +58,13 @@ sudo sed -i 's/sysmon.large_heap = 8MB/sysmon.large_heap = 64MB/g' $BASE_DIR/emq
 sudo sed -i 's/node.name = emqx@127.0.0.1/node.name = emqx@${local_ip}/g' $BASE_DIR/emqx/etc/emqx.conf
 sudo sed -i 's/^node\.cookie.*/node.cookie = ${cookie}/' $BASE_DIR/emqx/etc/emqx.conf
 
-
 # emqx cluster
 sudo sed -i 's/^cluster\.discovery.*/cluster.discovery = static/' $BASE_DIR/emqx/etc/cluster.conf
 sudo sed -i 's/^## cluster\.static\.seeds.*/cluster.static.seeds = ${all_nodes}/' $BASE_DIR/emqx/etc/cluster.conf
 
-
 # create license file
 if [ -n "${emqx_lic}" ]; then
-sudo cat > $LIC<<EOF
+	sudo cat >$LIC <<EOF
 ${emqx_lic}
 EOF
 fi

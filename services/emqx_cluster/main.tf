@@ -1,10 +1,34 @@
-data "local_file" "package_file" {
-  filename = var.emqx_package
+locals {
+  package_url = var.is_emqx5 ? var.emqx5_package : var.emqx4_package
 }
 
-# throw error when packge not exists
-locals {
-  file_exists = fileexists(data.local_file.package_file.filename)
+#######################################
+# check package
+#######################################
+
+resource "null_resource" "check_path" {
+  triggers = {
+    package = local.package_url
+  }
+
+  # Execute a local script
+  provisioner "local-exec" {
+    command = <<EOT
+      #!/bin/bash
+      set -e
+
+      # Define the URL to check
+      url="${local.package_url}"
+
+      # Check if the URL ends with tar.gz or zip
+      if [[ "$url" =~ ubuntu20.04-amd64\.(zip|tar\.gz)$ ]]; then
+        echo "URL suffix is valid (ubuntu20.04-amd64.tar.gz or ubuntu20.04-amd64.zip)."
+      else
+        echo "Invalid URL suffix. URL should end with ubuntu20.04-amd64.tar.gz or ubuntu20.04-amd64.zip."
+        exit 1
+      fi
+    EOT
+  }
 }
 
 module "vpc" {
@@ -15,6 +39,7 @@ module "vpc" {
 
   emqx_address_space = var.emqx_address_space
   instance_count = var.emqx_instance_count
+  depends_on = [null_resource.check_path]
 }
 
 module "security_group" {
@@ -24,6 +49,7 @@ module "security_group" {
   vpc_id                   = module.vpc.vpc_id
   ingress_with_cidr_blocks = var.ingress_with_cidr_blocks
   egress_with_cidr_blocks  = var.egress_with_cidr_blocks
+  depends_on = [null_resource.check_path]
 }
 
 module "emqx4_cluster" {
@@ -39,12 +65,13 @@ module "emqx4_cluster" {
   system_disk_category       = var.system_disk_category
   system_disk_size           = var.system_disk_size
   internet_max_bandwidth_out = var.internet_max_bandwidth_out
-  emqx_package          = var.emqx_package
+  emqx_package          = var.emqx4_package
   emqx_lic                   = var.emqx_lic
   cookie = var.emqx_cookie
 
   security_group_id = module.security_group.security_group_id
   vswitch_ids = module.vpc.vswitch_ids
+  depends_on = [null_resource.check_path]
 }
 
 module "emqx5_cluster" {
@@ -60,12 +87,13 @@ module "emqx5_cluster" {
   system_disk_category       = var.system_disk_category
   system_disk_size           = var.system_disk_size
   internet_max_bandwidth_out = var.internet_max_bandwidth_out
-  emqx_package          = var.emqx_package
+  emqx_package          = var.emqx5_package
   emqx_lic                   = var.emqx_lic
   cookie = var.emqx_cookie
 
   security_group_id = module.security_group.security_group_id
   vswitch_ids = module.vpc.vswitch_ids
+  depends_on = [null_resource.check_path]
 }
 
 module "clb" {
@@ -79,4 +107,5 @@ module "clb" {
   instance_ids          = var.is_emqx5 ? module.emqx5_cluster[0].instance_ids : module.emqx4_cluster[0].instance_ids
   listener_http_ports = var.listener_http_ports
   listener_tcp_ports  = var.listener_tcp_ports
+  depends_on = [null_resource.check_path]
 }
